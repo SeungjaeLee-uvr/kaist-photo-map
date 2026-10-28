@@ -46,7 +46,7 @@ async function init(){
     tiles.on('tileerror',()=>{if(!photos.length)$('status').textContent='지도를 불러올 수 없어요. 인터넷 연결을 확인해 주세요.';});
   }else $('map').textContent='지도를 불러올 수 없어요. 인터넷 연결을 확인해 주세요.';
   try{
-    const response=await fetch('./photos.json');
+    const response=await fetch('./photos.json?v=2');
     if(!response.ok)throw new Error('사진 목록 불러오기 실패');
     photos=validateManifest(await response.json());
     for(const photo of photos){
