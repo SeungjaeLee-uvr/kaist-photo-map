@@ -5,14 +5,15 @@
 <meta name="description" content="카이스트 주변 사진과 촬영 위치">
 <title>KAIST 사진 지도</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script type="module" src="app.mjs"></script>
+<script type="module" src="app.mjs?v=2"></script>
 </head>
 <body>
-<main>
+<main id="layout" class="map-only">
 <div id="map" aria-label="사진 촬영 위치 지도"></div>
-<section id="photos" aria-label="사진">
+<section id="photos" aria-label="사진" hidden>
+<button id="close-panel" aria-label="사진 패널 닫고 지도만 보기">닫기 ×</button>
 <p id="status" role="status">사진을 기다리고 있어요.</p>
 <button id="selected" aria-label="사진 크게 보기" hidden><img id="photo" alt=""></button>
 <nav id="thumbnails" aria-label="사진 선택" hidden></nav>

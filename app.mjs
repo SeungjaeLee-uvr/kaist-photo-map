@@ -1,12 +1,13 @@
-import {hasGPS,photoPath,validateManifest} from './core.mjs';
+import {hasGPS,photoPath,validateManifest,directionCone} from './core.mjs?v=2';
 const $=id=>document.getElementById(id);
-let photos=[],selected=null,map;
+let photos=[],selected=null,map,directionLayer;
 const markers=new Map();
 function icon(active){
   return L.divIcon({className:'',html:`<span class="pin${active?' active':''}"></span>`,iconSize:[24,24],iconAnchor:[12,12]});
 }
 function select(photo){
   selected=photo;
+  setPanel(true);
   $('photo').src=photoPath(photo.name);$('photo').alt=photo.name;
   $('selected').hidden=false;
   $('status').hidden=true;
@@ -16,8 +17,21 @@ function select(photo){
     if(active)button.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
   });
   markers.forEach((marker,p)=>{marker.setIcon(icon(p===photo));marker.setZIndexOffset(p===photo?1000:0);});
+  if(directionLayer){directionLayer.remove();directionLayer=null;}
+  const cone=directionCone(photo);
+  if(map&&cone.length)directionLayer=L.polygon(cone,{color:'#ad713b',weight:1,fillColor:'#d7964a',fillOpacity:.3,interactive:false}).addTo(map);
   if(map&&hasGPS(photo))map.setView([photo.latitude,photo.longitude],Math.max(map.getZoom(),17));
 }
+function setPanel(open){
+  $('photos').hidden=!open;
+  $('layout').classList.toggle('map-only',!open);
+  map?.invalidateSize({pan:false});
+}
+$('close-panel').onclick=()=>{
+  setPanel(false);
+  if(directionLayer){directionLayer.remove();directionLayer=null;}
+  markers.get(selected)?.getElement()?.focus();
+};
 function openViewer(){
   if(!selected)return;
   $('large').src=photoPath(selected.name);$('large').alt=selected.name;$('viewer').showModal();
@@ -47,7 +61,6 @@ async function init(){
     }
     $('thumbnails').hidden=photos.length<2;
     if(photos.length){
-      select(photos[0]);
       const points=photos.filter(hasGPS).map(p=>[p.latitude,p.longitude]);
       if(points.length)map?.fitBounds(points,{padding:[35,35],maxZoom:17});
     }
